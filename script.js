@@ -1,4 +1,3 @@
-// Load tasks from local storage when the page loads
 document.addEventListener("DOMContentLoaded", loadTasks);
 
 function addTask() {
@@ -14,7 +13,7 @@ function addTask() {
     li.innerHTML = `${taskInput.value} <button onclick="removeTask(this)">X</button>`;
 
     taskList.appendChild(li);
-    saveTasks(); // Save updated task list to local storage
+    saveTasks(); // Save updated task list
 
     taskInput.value = "";
 }
@@ -22,20 +21,20 @@ function addTask() {
 function removeTask(button) {
     let li = button.parentElement;
     li.remove();
-    saveTasks(); // Update local storage after removing a task
+    saveTasks(); // Update storage after removing a task
 }
 
 function saveTasks() {
     let tasks = [];
     document.querySelectorAll("#taskList li").forEach((li) => {
-        tasks.push(li.textContent.replace("X", "").trim());
+        tasks.push(li.firstChild.textContent.trim()); // Ensure we only save the text, not the "X" button
     });
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("tasks", JSON.stringify(tasks)); // Save in local storage
 }
 
 function loadTasks() {
     let taskList = document.getElementById("taskList");
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Get tasks from storage
 
     tasks.forEach((task) => {
         let li = document.createElement("li");
