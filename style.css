@@ -16,9 +16,13 @@ body {
 input {
     width: 70%;
     padding: 10px;
-    margin: 10px 0;
+    margin: 10px 5px;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+#dueDate {
+    width: 25%;
 }
 
 button {
@@ -29,6 +33,11 @@ button {
     color: white;
     border: none;
     border-radius: 5px;
+}
+
+#clearAll {
+    background-color: #dc3545;
+    margin-top: 10px;
 }
 
 ul {
@@ -43,6 +52,12 @@ li {
     border-radius: 5px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: gray;
 }
 
 li button {
