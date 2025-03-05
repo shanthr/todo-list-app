@@ -1,45 +1,43 @@
-// Load tasks from local storage when the page loads
-document.addEventListener("DOMContentLoaded", loadTasks);
+// Firebase configuration (Replace with your actual Firebase config)
+const firebaseConfig = {
+    apiKey: "AIzaSyB3nrPuqCXgce6HZHTsFzSe8r0KvwKj-pc",
+    authDomain: "task-manager42.firebaseapp.com",
+    databaseURL: "https://task-manager42-default-rtdb.firebaseio.com/",
+    projectId: "task-manager42",
+    storageBucket: "task-manager42.firebasestorage.app",
+    messagingSenderId: "373333916044",
+    appId: "1:373333916044:web:d053a629a317eeeaff7ea9"
+};
 
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database().ref("tasks");
+
+// Add task to Firebase
 function addTask() {
     let taskInput = document.getElementById("taskInput");
-    let taskList = document.getElementById("taskList");
+    if (taskInput.value.trim() === "") return alert("Enter a task!");
 
-    if (taskInput.value.trim() === "") {
-        alert("Please enter a task!");
-        return;
-    }
-
-    let li = document.createElement("li");
-    li.innerHTML = `${taskInput.value} <button onclick="removeTask(this)">X</button>`;
-
-    taskList.appendChild(li);
-    saveTasks(); // Save updated task list to local storage
-
+    db.push({ task: taskInput.value }); // Store in Firebase
     taskInput.value = "";
 }
 
-function removeTask(button) {
-    let li = button.parentElement;
-    li.remove();
-    saveTasks(); // Update local storage after removing a task
+// Remove task from Firebase
+function removeTask(key) {
+    db.child(key).remove(); // Delete from Firebase
 }
 
-function saveTasks() {
-    let tasks = [];
-    document.querySelectorAll("#taskList li").forEach((li) => {
-        tasks.push(li.textContent.replace("X", "").trim());
-    });
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function loadTasks() {
+// Load tasks in real time
+db.on("value", (snapshot) => {
     let taskList = document.getElementById("taskList");
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    taskList.innerHTML = "";
 
-    tasks.forEach((task) => {
+    snapshot.forEach((childSnapshot) => {
+        let key = childSnapshot.key;
+        let task = childSnapshot.val().task;
+
         let li = document.createElement("li");
-        li.innerHTML = `${task} <button onclick="removeTask(this)">X</button>`;
+        li.innerHTML = `${task} <button onclick="removeTask('${key}')">X</button>`;
         taskList.appendChild(li);
     });
-}
+});
